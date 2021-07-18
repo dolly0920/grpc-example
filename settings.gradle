@@ -6,4 +6,6 @@ pluginManagement {
 rootProject.name = 'project-info-service'
 include 'grpc-server'
 include 'grpc-client'
+include 'grpc-pattern-server'
+include 'grpc-pattern-client'
 

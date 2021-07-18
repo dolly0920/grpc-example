@@ -12,6 +12,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/grpc-client" />
+            <option value="$PROJECT_DIR$/grpc-pattern-client" />
+            <option value="$PROJECT_DIR$/grpc-pattern-server" />
             <option value="$PROJECT_DIR$/grpc-server" />
           </set>
         </option>
