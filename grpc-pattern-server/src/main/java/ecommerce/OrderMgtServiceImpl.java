@@ -74,6 +74,8 @@ public class OrderMgtServiceImpl extends OrderManagementGrpc.OrderManagementImpl
         OrderManagementOuterClass.Order order = orderMap.get(request.getValue());
         if (order != null) {
             System.out.printf("Order Retrieved : ID - %s", order.getId());
+            responseObserver.onNext(order);
+            responseObserver.onCompleted();
         } else {
             logger.info("Order : " + request.getValue() + " - Not found.");
             responseObserver.onCompleted();
@@ -182,7 +184,7 @@ public class OrderMgtServiceImpl extends OrderManagementGrpc.OrderManagementImpl
             @Override
             public void onCompleted() {
                 for (Map.Entry<String, OrderManagementOuterClass.CombinedShipment> entry : combinedShipmentMap.entrySet()) {
-                    responseObserver.onCompleted();
+                    responseObserver.onNext(entry.getValue());
                 }
                 responseObserver.onCompleted();
             }
