@@ -1,6 +1,7 @@
 package ecommerce;
 
 import com.google.protobuf.StringValue;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
 import java.util.AbstractMap;
@@ -61,7 +62,13 @@ public class OrderMgtServiceImpl extends OrderManagementGrpc.OrderManagementImpl
     // Unary
     @Override
     public void addOrder(OrderManagementOuterClass.Order request, StreamObserver<StringValue> responseObserver) {
-        logger.info("Order Added - ID: " + request.getId() + ", Destination : " + request.getDestination());
+
+        // handling invalid orders;
+        if (request.getId().equals("-1")) {
+            logger.info("Invalid Order ID: " + request.getId());
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Invalid order ID received.").asException());
+        }
+
         orderMap.put(request.getId(), request);
         StringValue id = StringValue.newBuilder().setValue("100500").build();
         responseObserver.onNext(id);

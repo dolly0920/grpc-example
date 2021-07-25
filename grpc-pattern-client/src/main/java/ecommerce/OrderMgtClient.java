@@ -3,6 +3,7 @@ package ecommerce;
 import com.google.protobuf.StringValue;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
 import java.util.Iterator;
@@ -15,44 +16,66 @@ public class OrderMgtClient {
     private static final Logger logger = Logger.getLogger(OrderMgtClient.class.getName());
 
     public static void main(String[] args) {
+//        ManagedChannel channel = ManagedChannelBuilder.forAddress(
+//                "localhost", 50051).usePlaintext().build();
+//        OrderManagementGrpc.OrderManagementBlockingStub stub = OrderManagementGrpc.newBlockingStub(channel); // .withDeadlineAfter(1000, TimeUnit.MILLISECONDS);
+//        OrderManagementGrpc.OrderManagementStub asyncStub = OrderManagementGrpc.newStub(channel);
+//
+//        OrderManagementOuterClass.Order order = OrderManagementOuterClass.Order
+//                .newBuilder()
+//                .setId("101")
+//                .addItems("iPhone XS").addItems("Mac Book Pro")
+//                .setDestination("San Jose, CA")
+//                .setPrice(2300)
+//                .build();
+//
+//        // Add Order
+//        StringValue result = stub.addOrder(order);
+//        logger.info("AddOrder Response -> : " + result.getValue());
+//
+//        // Get Order
+//        StringValue id = StringValue.newBuilder().setValue("101").build();
+//        OrderManagementOuterClass.Order orderResponse = stub.getOrder(id);
+//        logger.info("GetOrder Response -> : " + orderResponse.toString());
+//
+//        // Search Orders
+//        StringValue searchStr = StringValue.newBuilder().setValue("Google").build();
+//        Iterator<OrderManagementOuterClass.Order> matchingOrdersItr;
+//        matchingOrdersItr = stub.searchOrders(searchStr);
+//        while (matchingOrdersItr.hasNext()) {
+//            OrderManagementOuterClass.Order matchingOrder = matchingOrdersItr.next();
+//            logger.info("Search Order Response -> Matching Order - " + matchingOrder.getId());
+//            logger.info(" Order : " + order.getId() + "\n "
+//                    + matchingOrder.toString());
+//        }
+//
+//        // Update Orders
+//        invokeOrderUpdate(asyncStub);
+//
+//        // Process Order
+//        invokeOrderProcess(asyncStub);
         ManagedChannel channel = ManagedChannelBuilder.forAddress(
                 "localhost", 50051).usePlaintext().build();
-        OrderManagementGrpc.OrderManagementBlockingStub stub = OrderManagementGrpc.newBlockingStub(channel);
+
+        OrderManagementGrpc.OrderManagementBlockingStub stub = OrderManagementGrpc.newBlockingStub(channel).withDeadlineAfter(1000, TimeUnit.MILLISECONDS);
         OrderManagementGrpc.OrderManagementStub asyncStub = OrderManagementGrpc.newStub(channel);
 
+        // Creating an order with invalid Order ID.
         OrderManagementOuterClass.Order order = OrderManagementOuterClass.Order
                 .newBuilder()
-                .setId("101")
+                .setId("-1")
                 .addItems("iPhone XS").addItems("Mac Book Pro")
                 .setDestination("San Jose, CA")
-                .setPrice(2300)
                 .build();
 
-        // Add Order
-        StringValue result = stub.addOrder(order);
-        logger.info("AddOrder Response -> : " + result.getValue());
-
-        // Get Order
-        StringValue id = StringValue.newBuilder().setValue("101").build();
-        OrderManagementOuterClass.Order orderResponse = stub.getOrder(id);
-        logger.info("GetOrder Response -> : " + orderResponse.toString());
-
-        // Search Orders
-        StringValue searchStr = StringValue.newBuilder().setValue("Google").build();
-        Iterator<OrderManagementOuterClass.Order> matchingOrdersItr;
-        matchingOrdersItr = stub.searchOrders(searchStr);
-        while (matchingOrdersItr.hasNext()) {
-            OrderManagementOuterClass.Order matchingOrder = matchingOrdersItr.next();
-            logger.info("Search Order Response -> Matching Order - " + matchingOrder.getId());
-            logger.info(" Order : " + order.getId() + "\n "
-                    + matchingOrder.toString());
+        try {
+            // Add Order with a deadline
+            StringValue result = stub.addOrder(order);
+            logger.info("AddOrder Response -> : " + result.getValue());
+        } catch (StatusRuntimeException e) {
+            logger.info("Error Received - Error Code : " + e.getStatus().getCode());
+            logger.info("Error details -> " + e.getMessage());
         }
-
-        // Update Orders
-        invokeOrderUpdate(asyncStub);
-
-        // Process Order
-        invokeOrderProcess(asyncStub);
 
     }
 
