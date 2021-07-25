@@ -8,4 +8,5 @@ include 'grpc-server'
 include 'grpc-client'
 include 'grpc-pattern-server'
 include 'grpc-pattern-client'
+include 'grpc-deadline-server'
 
