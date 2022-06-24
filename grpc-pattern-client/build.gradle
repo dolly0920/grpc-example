@@ -6,6 +6,7 @@ repositories {
 }
 
 def grpcVersion = '1.39.0'
+def protobufVersion = '3.17.2'
 
 dependencies {
     compile "io.grpc:grpc-netty:${grpcVersion}"
@@ -26,11 +27,19 @@ buildscript {
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.17.2'
+        if (project.hasProperty('protoc_platform')) {
+            artifact = "com.google.protobuf:protoc:${protobufVersion}:${protoc_platform}"
+        } else {
+            artifact = "com.google.protobuf:protoc:${protobufVersion}"
+        }
     }
     plugins {
         grpc {
-            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+            if (project.hasProperty('protoc_platform')) {
+                artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}:${protoc_platform}"
+            } else {
+                artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+            }
         }
     }
     generateProtoTasks {

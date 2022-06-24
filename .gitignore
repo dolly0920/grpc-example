@@ -4,3 +4,6 @@ build/
 .idea/
 gradle/
 src/
+/gradle.properties
+**/out/
+**/build/
